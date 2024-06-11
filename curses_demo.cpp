@@ -1,5 +1,6 @@
 #include<ncurses.h>
 #include<unistd.h>
+#include<assert.h>
 
 //      1  15 px     1    20 px      1
 //      +------------+---------------+
@@ -13,8 +14,21 @@ struct point_struct {
 typedef point_struct point;
 
 void draw_win(point p1, point p2) {
-    mvaddch(p1.y, p1.x, 'o');
-    mvaddch(p2.y, p2.x, 'o');
+    mvaddch(p1.y, p1.x, '+');
+    mvaddch(p1.y, p2.x, '+');
+    mvaddch(p2.y, p1.x, '+');
+    mvaddch(p2.y, p2.x, '+');
+
+    for ( int x = p1.x + 1; x < p2.x - 1; ++x ) {
+        mvaddch(p1.y, x,'-');
+        mvaddch(p2.y, x,'-');
+    }
+    addch('+');
+
+    for ( int y = p1.y + 1; y < p2.y - 1; y++ ) {
+        mvaddch(y, p1.x, '|');
+        mvaddch(y, p2.x, '|');
+    }
 }
 
 int main()
@@ -24,33 +38,27 @@ int main()
     keypad(stdscr, TRUE);
     noecho();
 
-    int w1 = 15;
-    int l2 = 20;
-    int h = 2;
+    int w1 = 17;
+    int w2 = 22;
+    int h = 4;
 
-    mvaddch(0, 0, '+');
-    for ( int x = 0; x <= w1; ++x ) {
-        addch('-');
-    }
-    addch('+');
-
-    int beg_y = 1;
+    int beg_x = 0;
+    int end_x = beg_x + w1;
+    int beg_y = 0;
     int end_y = beg_y + h;
-    int r_border = 2+w1;
-    for ( int y = beg_y; y < end_y; y++ ) {
-        mvaddch(y, 0, '|');
-        mvaddch(y, r_border, '|');
-    }
 
-    mvaddch(h+1, 0, '+');
-    for ( int x = 0; x <= w1; ++x ) {
-        addch('-');
-    }
-    addch('+');
+    point w1_p1 = {beg_x, beg_y};
+    point w1_p2 = {end_x, end_y};
+    draw_win(w1_p1, w1_p2);
 
-    point p1 = {2, 2};
-    point p2 = {4, 4};
-    draw_win(p1, p2);
+    int w2_beg_x = end_x + 1;
+    int w2_end_x = w2_beg_x + w2;
+    beg_y = 0;
+    end_y = beg_y + h + 1;
+
+    point w2_p1 = {w2_beg_x, beg_y};
+    point w2_p2 = {w2_end_x, end_y};
+    draw_win(w2_p1, w2_p2);
 
     int ch = wgetch(stdscr);
     endwin();
