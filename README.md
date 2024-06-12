@@ -1,3 +1,3 @@
 https://tldp.org/HOWTO/pdf/NCURSES-Programming-HOWTO.pdf
 
-Bookmark: 6.2
+Bookmark: 7 Input functions
