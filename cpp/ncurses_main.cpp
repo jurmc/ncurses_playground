@@ -1,63 +1,97 @@
+#include<nc_window.hpp>
+
 #include<ncurses.h>
+
 #include<unistd.h>
 #include<assert.h>
+#include<thread>
+#include<signal.h>
 
-//      1  15 px     1    20 px      1
-//      +------------+---------------+
-// 2 px | Win1       |  Win2         |
-//      +------------+---------------+
+#include<chrono>
+#include<sstream>
+#include<iomanip>
+#include<string>
 
-struct point_struct {
-    int x;
-    int y;
-};
-typedef point_struct point;
+using namespace std;
 
-void draw_win(point p1, point p2) {
-    mvaddch(p1.y, p1.x, ACS_ULCORNER);
-    mvaddch(p1.y, p2.x, ACS_URCORNER);
-    mvaddch(p2.y - 1, p1.x, ACS_LLCORNER);
-    mvaddch(p2.y - 1, p2.x, ACS_LRCORNER);
+static bool sigwinch = false;
 
-    for ( int x = p1.x + 1; x < p2.x - 1; ++x ) {
-        mvaddch(p1.y, x, ACS_HLINE);
-        mvaddch(p2.y - 1, x,ACS_HLINE);
+static void sigwinch_handler(int sig) {
+    if (SIGWINCH == sig) {
+        sigwinch = true;
     }
+}
 
-    for ( int y = p1.y + 1; y < p2.y - 1; y++ ) {
-        mvaddch(y, p1.x, ACS_VLINE);
-        mvaddch(y, p2.x, ACS_VLINE);
-    }
+string get_time()
+{
+    auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+
+    std::stringstream ss;
+    ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X");
+    return ss.str();
 }
 
 int main()
 {
+    int w1 = 25;
+    int w2 = 10;
+    int h = 5;
+
+    int w1_y = 0;
+    int w1_x = 0;
+
+    int w2_y = w1_y;
+    int w2_x = w1_x + w1;
+
+    Geometry::Point p1 = {w1_y, w1_x};
+    Geometry::Size s1 = {h, w1};
+
+    Geometry::Point p2 = {w2_y, w2_x};
+    Geometry::Size s2 = {h, w2};
+
+    NcWindow win1(p1, s1);
+    NcWindow win2(p2, s2);
+
     initscr();
     raw();
+    timeout(0);
     keypad(stdscr, TRUE);
     noecho();
 
-    int w1 = 17;
-    int w2 = 22;
-    int h = 4;
+    signal(SIGWINCH, sigwinch_handler);
 
-    const int beg_x = 0;
-    const int end_x = beg_x + w1;
-    const int beg_y = 0;
-    const int end_y = beg_y + h;
+    int ch = getch();
 
-    point w1_p1 = {beg_x, beg_y};
-    point w1_p2 = {end_x, end_y};
-    draw_win(w1_p1, w1_p2);
+    int maxy, maxx;
+    getmaxyx(stdscr, maxy, maxx);
 
-    int w2_beg_x = end_x + 1;
-    int w2_end_x = w2_beg_x + w2;
+    while ('q' != ch ) {
+        if (true == sigwinch) {
+            sigwinch = false;
+            
+            endwin(); 
+            refresh();
 
-    point w2_p1 = {w2_beg_x, beg_y};
-    point w2_p2 = {w2_end_x, end_y};
-    draw_win(w2_p1, w2_p2);
+            getmaxyx(stdscr, maxy, maxx);
+        }
 
-    int ch = wgetch(stdscr);
+        win1.draw();
+        win2.draw();
+
+        auto time = get_time();
+        mvprintw(5, 1, "last ch: ");
+        addch(ch);
+        mvprintw(6, 1, "sigwinch flag: ");
+        addch(sigwinch == true ? '1' : '0');
+        mvprintw(7, 1, "maxy: %d, maxx: %d", maxy, maxx);
+        win1.add_line(time);
+
+        refresh();
+        std::this_thread::sleep_for(200ms) ;
+        ch = getch();
+    }
+
     endwin();
 
     return 0;

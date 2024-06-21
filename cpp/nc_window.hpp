@@ -1,9 +1,8 @@
 #include<iostream>
 #include<string>
+#include<vector>
 
 using namespace std;
-
-// TODO: Some kind of namespase for Origin and Size
 
 namespace Geometry {
     struct Point {
@@ -23,6 +22,7 @@ class NcWindow {
     private:
         Point origin;
         Size size;
+        vector<string> buff;
 
     public:
         NcWindow(Point origin, Size size);

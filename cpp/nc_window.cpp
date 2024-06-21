@@ -6,7 +6,7 @@
 
 using namespace std;
 
-NcWindow::NcWindow(Point origin, Size size) : origin(origin), size(size) {};
+NcWindow::NcWindow(Point origin, Size size) : origin(origin), size(size), buff(vector<string>()) {};
 
 void NcWindow::draw() {
     Point dest = {origin.y + size.height - 1, origin.x + size.width - 1};
@@ -28,5 +28,6 @@ void NcWindow::draw() {
 }
 
 void NcWindow::add_line(string line) {
+    buff.push_back(line);
     mvprintw(origin.y+1, origin.x+1, line.c_str());
 }
