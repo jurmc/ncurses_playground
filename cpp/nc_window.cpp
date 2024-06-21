@@ -27,6 +27,11 @@ void NcWindow::draw() {
     }
 }
 
+void NcWindow::update_geometry(Point new_origin, Size new_size) {
+    origin = new_origin;
+    size = new_size;
+}
+
 void NcWindow::add_line(string line) {
     buff.push_back(line);
     mvprintw(origin.y+1, origin.x+1, line.c_str());

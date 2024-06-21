@@ -28,5 +28,7 @@ class NcWindow {
         NcWindow(Point origin, Size size);
 
         void draw();
+        void update_geometry(Point new_origin, Size new_size);
+
         void add_line(string line);
 };

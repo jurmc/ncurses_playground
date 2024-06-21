@@ -32,11 +32,15 @@ string get_time()
     return ss.str();
 }
 
-int main()
+void get_geometry_for_windows(int maxy, int maxx,
+        Geometry::Point &p1,
+        Geometry::Size  &s1,
+        Geometry::Point &p2,
+        Geometry::Size  &s2)
 {
-    int w1 = 25;
-    int w2 = 10;
-    int h = 5;
+    int w1 = maxx / 2;
+    int w2 = maxx / 4;
+    int h = maxy - 3;
 
     int w1_y = 0;
     int w1_x = 0;
@@ -44,40 +48,58 @@ int main()
     int w2_y = w1_y;
     int w2_x = w1_x + w1;
 
-    Geometry::Point p1 = {w1_y, w1_x};
-    Geometry::Size s1 = {h, w1};
+    p1 = {w1_y, w1_x};
+    s1 = {h, w1};
 
-    Geometry::Point p2 = {w2_y, w2_x};
-    Geometry::Size s2 = {h, w2};
+    p2 = {w2_y, w2_x};
+    s2 = {h, w2};
+}
 
-    NcWindow win1(p1, s1);
-    NcWindow win2(p2, s2);
-
+int main()
+{
     initscr();
     raw();
     timeout(0);
     keypad(stdscr, TRUE);
     noecho();
 
+    int maxy, maxx;
+    getmaxyx(stdscr, maxy, maxx);
+
+    Geometry::Point p1, p2;
+    Geometry::Size s1, s2;
+
+    get_geometry_for_windows(maxy, maxx, p1, s1, p2, s2);
+
+    NcWindow win1(p1, s1);
+    NcWindow win2(p2, s2);
+
     signal(SIGWINCH, sigwinch_handler);
 
     int ch = getch();
 
-    int maxy, maxx;
-    getmaxyx(stdscr, maxy, maxx);
+    win1.draw();
+    win2.draw();
+    refresh();
 
     while ('q' != ch ) {
         if (true == sigwinch) {
             sigwinch = false;
-            
+           
+            clear(); 
             endwin(); 
             refresh();
 
             getmaxyx(stdscr, maxy, maxx);
-        }
+            get_geometry_for_windows(maxy, maxx, p1, s1, p2, s2);
+            win1.update_geometry(p1, s1);
+            win2.update_geometry(p1, s2);
 
-        win1.draw();
-        win2.draw();
+            win1.draw();
+            win2.draw();
+
+            refresh();
+        }
 
         auto time = get_time();
         mvprintw(5, 1, "last ch: ");
