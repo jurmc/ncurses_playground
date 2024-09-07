@@ -16,8 +16,8 @@ WIN int_win_params() {
 
     win.heigth = 5;
     win.width = 10;
-    win.beg_y = 1;
-    win.beg_x = 2;
+    win.beg_y = LINES / 2 - win.heigth / 2;
+    win.beg_x = COLS / 2 - win.width / 2;
 
     win.border.ls = ACS_VLINE;
     win.border.rs = ACS_VLINE;
@@ -32,7 +32,9 @@ WIN int_win_params() {
     return win;
 }
 
-void print_win_params() {
+void print_win_params(WIN *win) {
+    mvprintw(1, 0, "h: %d, w: %d", win->heigth, win->width);
+    mvprintw(2, 0, "y: %d, x: %d", win->beg_y, win->beg_x);
 }
 
 void draw_win(WIN *win, bool flag) {
@@ -106,6 +108,7 @@ int main(int argc, char **argv) {
                 draw_win(&win, TRUE);
                 break;
         }
+        print_win_params(&win);
     }
 
     endwin();
