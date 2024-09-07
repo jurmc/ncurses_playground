@@ -85,9 +85,9 @@ int main()
     while ('q' != ch ) {
         if (true == sigwinch) {
             sigwinch = false;
-           
-            clear(); 
-            endwin(); 
+
+            clear();
+            endwin();
             refresh();
 
             getmaxyx(stdscr, maxy, maxx);
