@@ -2,6 +2,13 @@
 #include<unistd.h>
 #include<stdlib.h>
 
+/* rand module */
+
+uint32_t get_rand(uint32_t range_max)
+{
+    return range_max * ((float)rand() / RAND_MAX);
+}
+
 /* drops-beg *********************************/
 
 typedef struct drop_struct {
@@ -22,7 +29,7 @@ drops_t* drops_init(uint32_t len) {
     drops->len = len;
     for (int i = 0; i < len; ++i) {
         drops->drops[i].live = false;
-        drops->drops[i].y = 10;
+        drops->drops[i].y = 0;
         drops->drops[i].x = i;
     }
 
@@ -64,16 +71,16 @@ void _spawn_drops(drops_t *drops) {
         return;
     }
 
-    float r = rand();
-    uint32_t toss = empty_slots * (float)(r / RAND_MAX);
+    uint32_t toss = get_rand(empty_slots);
 
     for (uint32_t i = 0; i < drops->len; i++) {
-        if (false == drops->drops[i].live && toss == 0) {
-            drops->drops[i].live = true;
-            drops->drops[i].y = 10;
-            break;
+        if (false == drops->drops[i].live) {
+            if (toss == 0) {
+                drops->drops[i].live = true;
+                break;
+            }
+            --toss;
         }
-        --toss;
     }
 }
 
