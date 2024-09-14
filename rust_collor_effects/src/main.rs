@@ -6,6 +6,7 @@ use core::ffi::c_int;
 
 extern "C" {
     fn multiply(a: c_int, b: c_int) -> c_int;
+    fn drops_main();
 }
 
 use std::{time};
@@ -35,6 +36,10 @@ fn main() {
     }
 
     endwin();
+
+    unsafe {
+        drops_main();
+    }
 
     println!("[Rust] Hello from Rust:  🦀\n");
     unsafe {

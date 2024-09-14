@@ -15,4 +15,4 @@ get_rand.o: get_rand.c get_rand.h
 	gcc get_rand.c -c -o $@
 
 clean:
-	rm *.o
+	rm -f *.o drops_demo
