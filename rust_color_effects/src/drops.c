@@ -9,7 +9,7 @@ drops_t* drops_init(uint32_t len) {
     drops_t *drops = malloc(sizeof(drop_t) + len * sizeof(drop_t));
 
     drops->len = len;
-    for (int i = 0; i < len; ++i) {
+    for (uint32_t i = 0; i < len; ++i) {
         drops->drops[i].live = false;
         drops->drops[i].y = 0;
         drops->drops[i].x = i;
@@ -37,9 +37,6 @@ void process_drops(drops_t *drops) {
 void _kick_drop(drop_t *drop);
 void _print_drop(drop_t *drop);
 /* one drop */
-
-void kick_drops(drops_t *drops) {
-}
 
 void _spawn_drops(drops_t *drops) {
     uint32_t empty_slots = 0;
@@ -104,13 +101,6 @@ void _print_drop(drop_t *drop) {
 }
 
 int drops_main() {
-    initscr();
-    start_color();
-    timeout(0);
-    cbreak();
-    noecho();
-    curs_set(0);
-
     init_pair(1, COLOR_BLACK, COLOR_RED);
     init_pair(2, COLOR_BLACK, COLOR_GREEN);
     init_pair(3, COLOR_BLACK, COLOR_YELLOW);
@@ -144,8 +134,6 @@ int drops_main() {
     }
 
     drops_destroy(drops);
-    refresh();
-    endwin();
 
     return 0;
 
