@@ -12,6 +12,10 @@ typedef struct drops_struct {
     drop_t drops[];
 } drops_t;
 
+////
+void dump_drop_data(drop_t *drop);
+void dump_drops_data(drops_t *drops);
+////
 int drops_main();
 
 drops_t* drops_init(uint32_t len);
