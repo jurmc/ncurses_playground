@@ -1,21 +1,29 @@
+use core::ffi::c_int;
 use core::ffi::c_char;
 use core::ffi::c_uchar;
 use core::ffi::c_short;
 use std::ffi::CString;
 use std::ffi::CStr;
 
+#[repr(C)]
+pub struct SomeStruct {
+    fields: *mut c_int,
+    size: usize,
+}
+
 extern "C" {
     fn dump_c_char(v: c_char);
     fn dump_c_unsigned_char(v: c_uchar);
     fn dump_c_short(v: c_short);
     fn dump_c_string(s: *const i8);
+    fn dump_c_array(arr: *const SomeStruct);
+    fn modify_c_array(arr: *mut SomeStruct);
 
     fn dump_all();
 
     fn dump_p_c_char(v: *const c_char);
     fn dump_p_c_unsigned_char(v: *const c_uchar);
     fn dump_p_c_short(v: *const c_short);
-
 }
 
 fn dump_i8(v: i8) {
@@ -32,6 +40,12 @@ fn dump_i16(v: i16) {
 
 fn dump_string(s: &str) {
     println!("[R] String s: {:?}", s);
+}
+
+fn dump_array(arr: &[c_int]) {
+    for item in arr {
+        println!("[R] array item: {}", item);
+    }
 }
 
 fn main() {
@@ -59,7 +73,17 @@ fn main() {
         dump_c_string(c_str.as_ptr());
         dump_string(&rust_string);
 
-//        println!("-------------------------");
+        let mut arr: [c_int; 8] = [1, 2, 3, 4, 5, 6, 7, 8];
+        dump_array(&arr);
+        let mut some_struct = SomeStruct {
+            fields: arr.as_mut_ptr(),
+            size: 8,
+        };
+        dump_c_array(&some_struct);
+        modify_c_array(&mut some_struct);
+        println!("-------------------------");
+        dump_c_array(&some_struct);
+
 //        dump_all();
     }
 }
