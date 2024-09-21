@@ -16,6 +16,13 @@ void dump_drops_data(int len, drop_t *drops) {
         mvprintw(27+i, 17, "drop_data[%i]: x: %i, y: %i", i, drops[i].x, drops[i].y);
     }
 }
+
+void dump_drops_data2(drops_t *s) {
+    mvprintw(30, 15, "[C2] dump_drops_data: len: %i", s->len);
+    for (int i = 0; i < s->len; ++i) {
+        mvprintw(31+i, 17, "[C2] drop_data[%i]: x: %i, y: %i", i, s->drops[i].x, s->drops[i].y);
+    }
+}
 //////////////////
 drops_t* drops_init(uint32_t len) {
     drops_t *drops = malloc(sizeof(drop_t) + len * sizeof(drop_t));
@@ -149,4 +156,17 @@ int drops_main() {
 
     return 0;
 
+}
+
+typedef struct SomeStruct {
+    size_t len;
+    int *fields;
+} SomeStructType;
+
+void dump_c_array(SomeStructType *some_struct)
+{
+    printf("[C] some_struct->len: %i\n", some_struct->len);
+    for (size_t idx = 0; idx < some_struct->len; ++idx) {
+        printf(" [C] some_struct[%i]: %i\n", idx, some_struct->fields[idx]);
+    }
 }

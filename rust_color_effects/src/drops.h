@@ -8,7 +8,7 @@ typedef struct drop_struct {
 } drop_t;
 
 typedef struct drops_struct {
-    uint32_t len;
+    int len;
     drop_t drops[];
 } drops_t;
 
