@@ -13,8 +13,8 @@ typedef struct drops_struct {
 } drops_t;
 
 ////
-void dump_drop_data(drop_t *drop);
-void dump_drops_data(drops_t *drops);
+void dump_drop_data(int y, drop_t *drop);
+void dump_drops_data(int len, drop_t *drops);
 ////
 int drops_main();
 

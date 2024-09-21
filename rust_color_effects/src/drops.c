@@ -7,13 +7,13 @@
 
 
 //////////////////
-void dump_drop_data(drop_t *drop) {
-    mvprintw(25, 15, "dump_drop_data: x: %i, y: %i, live: %b", drop->x, drop->y, drop->live);
+void dump_drop_data(int y, drop_t *drop) {
+    mvprintw(20+y, 15, "[C] dump_drop_data: x: %i, y: %i, live: %b", drop->x, drop->y, drop->live);
 }
-void dump_drops_data(drops_t *drops) {
-    mvprintw(26, 15, "dump_drops_data: len: %i", drops->len);
-    for (uint32_t i = 0; i < drops->len; ++i) {
-        mvprintw(27+i, 17, "drop_data: x: %i, y: %i", drops->drops[i].x, drops->drops[i].y);
+void dump_drops_data(int len, drop_t *drops) {
+    mvprintw(26, 15, "dump_drops_data: len: %i", len);
+    for (int i = 0; i < len; ++i) {
+        mvprintw(27+i, 17, "drop_data[%i]: x: %i, y: %i", i, drops[i].x, drops[i].y);
     }
 }
 //////////////////
