@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<stdlib.h>
 
 /* c_char Equivalent to C’s char type */
 void dump_c_char(char v)
@@ -57,3 +58,22 @@ void dump_p_c_short(const signed short *const v)
     printf("[C ptr] signed short: hi: %hi\n", *v);
 }
 
+
+int *allocate_array_in_c(size_t len, int val)
+{
+    int *retval = calloc(len, sizeof(int));
+
+    for (size_t i = 0; i < len; ++i) {
+        retval[i] = val++;
+    }
+
+    for (size_t i = 0; i < len; ++i) {
+        printf("[C} allocate_array_in_c: %i\n", retval[i]);
+    }
+
+    return retval;
+}
+
+void deallocate_array_in_c(int *p) {
+    free(p);
+}

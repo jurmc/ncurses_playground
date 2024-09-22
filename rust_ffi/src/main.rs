@@ -5,6 +5,8 @@ use core::ffi::c_short;
 use std::ffi::CString;
 use std::ffi::CStr;
 
+use std::slice;
+
 #[repr(C)]
 pub struct StructWithArray {
     fields: *mut c_int,
@@ -22,6 +24,9 @@ extern "C" {
     fn dump_p_c_char(v: *const c_char);
     fn dump_p_c_unsigned_char(v: *const c_uchar);
     fn dump_p_c_short(v: *const c_short);
+
+    fn allocate_array_in_c(len: usize, val: c_int) -> *const c_int;
+    fn deallocate_array_in_c(p: *const c_int);
 }
 
 fn dump_i8(v: i8) {
@@ -91,5 +96,12 @@ fn main() {
         modify_c_struct_containing_array(&mut struct_with_array_from_vec);
         println!("-------------------------");
         dump_c_struct_containing_array(&struct_with_array_from_vec);
+
+        let data_allocated_in_c = allocate_array_in_c(5, 2);
+        let v: Vec<i32> = slice::from_raw_parts(data_allocated_in_c, 5).to_vec();
+        deallocate_array_in_c(data_allocated_in_c);
+        for item in v.iter() {
+            println!("v: {}", item);
+        }
     }
 }
