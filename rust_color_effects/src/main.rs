@@ -18,21 +18,23 @@ pub struct DropsStruct {
     drops: *const DropStruct,
 }
 
-#[repr(C)]
-pub struct SomeStruct {
-    size: usize,
-    fields: *mut c_int,
-}
-
-
 extern "C" {
     fn drops_main(drops: *mut DropsStruct);
     fn dump_drop_data(y: c_int, drop: &DropStruct);
     fn dump_drops_data(len: c_int, drops: *const DropStruct);
     fn dump_drops_data2(s: *const DropsStruct);
     fn dump_array(drops: &DropsStruct);
+}
 
-    fn dump_c_array(arr: *const SomeStruct);
+fn drops_init(len: usize) -> Vec<DropStruct> {
+    let mut retval = Vec::with_capacity(len);
+
+    for i in 1..len {
+        let d = DropStruct { x: i as i32, y: 0, live: false };
+        retval.push(d);
+    }
+
+    retval
 }
 
 fn main() {
@@ -68,28 +70,18 @@ fn main() {
         drops: array2.as_ptr()};
     unsafe {
         dump_drops_data2(&drops);
+        std::mem::forget(drops);
     }
     /////
 
+    let new_drops = drops_init(COLS() as usize);
+    let mut drops = DropsStruct {
+        len: new_drops.len() as c_int,
+        drops: new_drops.as_ptr(),
+    };
     unsafe {
-        let d1 = DropStruct{x: 5, y: 5, live: true};
-        let d2 = DropStruct{x: 6, y: 6, live: true};
-        let drops_vec = vec![d1, d2];
-        let mut drops = DropsStruct {
-            len: drops_vec.len() as c_int,
-            drops: drops_vec.as_ptr(),
-        };
         drops_main(&mut drops);
     }
 
     endwin();
-
-    let mut arr: [c_int; 8] = [1, 2, 3, 4, 5, 6, 7, 8];
-    let mut some_struct = SomeStruct {
-        size: 8,
-        fields: arr.as_mut_ptr(),
-    };
-    unsafe {
-        dump_c_array(&some_struct);
-    }
 }

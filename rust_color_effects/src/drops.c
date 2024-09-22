@@ -24,7 +24,7 @@ void dump_drops_data2(drops_t *s) {
     }
 }
 //////////////////
-drops_t* drops_init(uint32_t len) {
+drops_t* c_drops_init(uint32_t len) {
     drops_t *drops = malloc(sizeof(drop_t) + len * sizeof(drop_t));
 
     drops->len = len;
@@ -38,7 +38,7 @@ drops_t* drops_init(uint32_t len) {
 }
 
 void drops_destroy(drops_t *drops) {
-free(drops);
+    free(drops);
 }
 
 void _spawn_drops(drops_t *drops);
@@ -151,8 +151,9 @@ int drops_main(drops_t *in_drops) {
         refresh();
         usleep(usleep_time);
     }
+    //drops_destroy(in_drops);
 
-    drops_t *loc_drops = drops_init(COLS);
+    drops_t *loc_drops = c_drops_init(COLS);
 
     while ((ch = getch()) != 'q')
     {
@@ -175,17 +176,4 @@ int drops_main(drops_t *in_drops) {
 
     return 0;
 
-}
-
-typedef struct SomeStruct {
-    size_t len;
-    int *fields;
-} SomeStructType;
-
-void dump_c_array(SomeStructType *some_struct)
-{
-    printf("[C] some_struct->len: %i\n", some_struct->len);
-    for (size_t idx = 0; idx < some_struct->len; ++idx) {
-        printf(" [C] some_struct[%i]: %i\n", idx, some_struct->fields[idx]);
-    }
 }

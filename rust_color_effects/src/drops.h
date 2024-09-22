@@ -18,7 +18,7 @@ void dump_drops_data(int len, drop_t *drops);
 ////
 int drops_main(drops_t *drops);
 
-drops_t* drops_init(uint32_t len);
+drops_t* c_drops_init(uint32_t len);
 void drops_destroy(drops_t *drops);
 
 void process_drops(drops_t *drops);
