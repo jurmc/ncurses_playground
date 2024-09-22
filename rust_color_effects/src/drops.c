@@ -119,7 +119,7 @@ void _print_drop(drop_t *drop) {
     }
 }
 
-int drops_main() {
+int drops_main(drops_t *in_drops) {
     init_pair(1, COLOR_BLACK, COLOR_RED);
     init_pair(2, COLOR_BLACK, COLOR_GREEN);
     init_pair(3, COLOR_BLACK, COLOR_YELLOW);
@@ -129,12 +129,31 @@ int drops_main() {
     init_pair(7, COLOR_BLACK, COLOR_WHITE);
     init_pair(8, COLOR_WHITE, COLOR_BLACK);
 
-    drops_t *drops = drops_init(COLS);
-
     int cnt = 0;
     int ch;
     bool stop = false;
     int usleep_time = 1000 * 100;
+
+    mvprintw(5, 1, "[in_drops]: len: %i", in_drops->len);
+    for (int i = 0; i < in_drops->len; ++i) {
+        drop_t drop = in_drops->drops[i];
+        mvprintw(6+i, 1, "[in_drops]: x: %i, y: %i, linve: %i", drop.x, drop.y, drop.live);
+    }
+
+    while ((ch = getch()) != 'q')
+    {
+        if (ch == 's') {
+            stop = stop ? false : true;
+        }
+
+        mvprintw(LINES-1, 0, "[1] cnt: %d", cnt++);
+        process_drops(in_drops);
+        refresh();
+        usleep(usleep_time);
+    }
+
+    drops_t *loc_drops = drops_init(COLS);
+
     while ((ch = getch()) != 'q')
     {
         if (ch == 's') {
@@ -146,13 +165,13 @@ int drops_main() {
             continue;
         }
 
-        mvprintw(LINES-1, 0, "cnt: %d", cnt++);
-        process_drops(drops);
+        mvprintw(LINES-1, 0, "[2] cnt: %d", cnt++);
+        process_drops(loc_drops);
         refresh();
         usleep(usleep_time);
     }
 
-    drops_destroy(drops);
+    drops_destroy(loc_drops);
 
     return 0;
 

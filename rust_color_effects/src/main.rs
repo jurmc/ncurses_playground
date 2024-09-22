@@ -26,7 +26,7 @@ pub struct SomeStruct {
 
 
 extern "C" {
-    fn drops_main();
+    fn drops_main(drops: *mut DropsStruct);
     fn dump_drop_data(y: c_int, drop: &DropStruct);
     fn dump_drops_data(len: c_int, drops: *const DropStruct);
     fn dump_drops_data2(s: *const DropsStruct);
@@ -72,7 +72,14 @@ fn main() {
     /////
 
     unsafe {
-        drops_main();
+        let d1 = DropStruct{x: 5, y: 5, live: true};
+        let d2 = DropStruct{x: 6, y: 6, live: true};
+        let drops_vec = vec![d1, d2];
+        let mut drops = DropsStruct {
+            len: drops_vec.len() as c_int,
+            drops: drops_vec.as_ptr(),
+        };
+        drops_main(&mut drops);
     }
 
     endwin();
