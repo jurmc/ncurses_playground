@@ -6,7 +6,7 @@ use std::ffi::CString;
 use std::ffi::CStr;
 
 #[repr(C)]
-pub struct SomeStruct {
+pub struct StructWithArray {
     fields: *mut c_int,
     size: usize,
 }
@@ -16,10 +16,8 @@ extern "C" {
     fn dump_c_unsigned_char(v: c_uchar);
     fn dump_c_short(v: c_short);
     fn dump_c_string(s: *const i8);
-    fn dump_c_array(arr: *const SomeStruct);
-    fn modify_c_array(arr: *mut SomeStruct);
-
-    fn dump_all();
+    fn dump_c_struct_containing_array(arr: *const StructWithArray);
+    fn modify_c_struct_containing_array(arr: *mut StructWithArray);
 
     fn dump_p_c_char(v: *const c_char);
     fn dump_p_c_unsigned_char(v: *const c_uchar);
@@ -75,15 +73,23 @@ fn main() {
 
         let mut arr: [c_int; 8] = [1, 2, 3, 4, 5, 6, 7, 8];
         dump_array(&arr);
-        let mut some_struct = SomeStruct {
+        let mut struct_with_array = StructWithArray {
             fields: arr.as_mut_ptr(),
             size: 8,
         };
-        dump_c_array(&some_struct);
-        modify_c_array(&mut some_struct);
+        dump_c_struct_containing_array(&struct_with_array);
+        modify_c_struct_containing_array(&mut struct_with_array);
         println!("-------------------------");
-        dump_c_array(&some_struct);
+        dump_c_struct_containing_array(&struct_with_array);
 
-//        dump_all();
+        let mut v = vec![1, 2, 3, 4, 5];
+        let mut struct_with_array_from_vec = StructWithArray {
+            fields: v.as_mut_ptr(),
+            size: v.len(),
+        };
+        dump_c_struct_containing_array(&struct_with_array_from_vec);
+        modify_c_struct_containing_array(&mut struct_with_array_from_vec);
+        println!("-------------------------");
+        dump_c_struct_containing_array(&struct_with_array_from_vec);
     }
 }
